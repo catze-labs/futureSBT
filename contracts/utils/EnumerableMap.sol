@@ -250,6 +250,26 @@ library EnumerableMap {
         return uint256(get(map._inner, bytes32(key), errorMessage));
     }
 
+    /**
+     * @dev Returns the keys of the map.
+     */
+    function getKeysByValue(UintToUintMap storage map, uint256 value) internal view returns (uint256[] memory) {
+        uint256[] memory keys = new uint256[](length(map));
+        uint256 count = 0;
+        for (uint256 i = 0; i < length(map); i++) {
+            (uint256 key, uint256 val) = at(map, i);
+            if (val == value) {
+                keys[count] = key;
+                count++;
+            }
+        }
+        uint256[] memory result = new uint256[](count);
+        for (uint256 i = 0; i < count; i++) {
+            result[i] = keys[i];
+        }
+        return result;
+    }
+
     // UintToAddressMap
 
     struct UintToAddressMap {
@@ -628,5 +648,21 @@ library EnumerableMap {
         string memory errorMessage
     ) internal view returns (bytes32) {
         return get(map._inner, bytes32(key), errorMessage);
+    }
+
+    /**
+     * @dev Returns the keys of the map.
+     */
+    function getKeysByValue(UintToBytes32Map storage map, bytes32 value) internal view returns (uint256[] memory) {
+        uint256[] memory keys = new uint256[](map._inner._keys.length());
+        uint256 count = 0;
+        for (uint256 i = 0; i < map._inner._keys.length(); i++) {
+            bytes32 key = map._inner._keys.at(i);
+            if (map._inner._values[key] == value) {
+                keys[count] = uint256(key);
+                count++;
+            }
+        }
+        return keys;
     }
 }
