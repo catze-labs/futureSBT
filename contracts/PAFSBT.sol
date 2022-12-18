@@ -319,7 +319,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     /**
      * @dev Sets the item map with itemId and profileId.
      */
-    function setItemIdsAndProfileId(uint256 key, uint256 value) external {
+    function setItemIdAndProfileId(uint256 key, uint256 value) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
@@ -363,7 +363,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     /**
      * @dev Sets the quest map with questId and profileId.
      */
-    function setQuestIdsAndProfileId(uint256 key, uint256 value) external {
+    function setQuestIdAndProfileId(uint256 key, uint256 value) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
