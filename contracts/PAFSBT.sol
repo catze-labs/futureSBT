@@ -15,7 +15,7 @@ import "./erc/ERC165.sol";
 import "./access/AccessControl.sol";
 
 /**
- * Written by Catze Labs running CyberGalz, Yooldo, TroublePunks, and more.
+ * Designed by R3plica and Developed by Catze Labs
  * Inspired by the Soul Bound Token (SBT) whitepaper by Vitalik Buterin and Binance Account Bound Token (BABT)
  * An experiment in Soul Bound Tokens (SBT's) following Vitalik's
  * co-authored whitepaper at:
@@ -81,7 +81,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
             "Only the account with OPERATOR_ROLE can attest the SBT"
         );
         require(to != address(0), "Address is empty");
-        require(!_tokenMap.contains(to), "SBT already exists");
+        require(_msgSender() == to || !_tokenMap.contains(to), "SBT already exists");
 
         _tokenId.increment();
         uint256 tokenId = _tokenId.current();

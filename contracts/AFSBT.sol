@@ -14,7 +14,7 @@ import "./erc/ERC165.sol";
 import "./access/AccessControl.sol";
 
 /**
- * Written by Catze Labs running CyberGalz, Yooldo, TroublePunks, and more.
+ * Designed by R3plica and Developed by Catze Labs
  * Inspired by the Soul Bound Token (SBT) whitepaper by Vitalik Buterin and Binance Account Bound Token (BABT)
  * An experiment in Soul Bound Tokens (SBT's) following Vitalik's
  * co-authored whitepaper at:
