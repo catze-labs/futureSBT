@@ -443,21 +443,21 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     /**
      * @dev Sets the quest and item maps with questIds, itemIds and profileIds.
      */
-    function batchSetQuestAndItemMaps(uint256[] calldata questIds, uint256[] calldata itemIds, uint256[] calldata profileIds) external {
+    function batchSetQuestAndItemMaps(uint256[] calldata questIds, uint256[] calldata profileIdsByQuestIds, uint256[] calldata itemIds, uint256[] calldata profileIdsByItemIds) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Only the account with DEFAULT_ADMIN_ROLE can set the quest and item map"
         );
         require (
-            itemIds.length == profileIds.length,
+            itemIds.length == profileIdsByQuestIds.length,
             "The length of itemIds and profileIds are not equal"
         );
         require (
-            questIds.length == profileIds.length,
+            questIds.length == profileIdsByItemIds.length,
             "The length of questIds and profileIds are not equal"
         );
-        this.setItemIdsAndProfileIds(itemIds, profileIds);
-        this.setQuestIdsAndProfileIds(questIds, profileIds);
+        this.setItemIdsAndProfileIds(itemIds, profileIdsByQuestIds);
+        this.setQuestIdsAndProfileIds(questIds, profileIdsByItemIds);
     }
 
     /**
