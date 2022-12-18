@@ -117,10 +117,6 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
             bytes32 playfabID_ = playfabIDs_[i];
             bytes32 createdAt_ = createdAts_[i];
 
-            if (to == address(0) || _tokenMap.contains(to)) {
-                continue;
-            }
-
             _tokenId.increment();
             uint256 tokenId = _tokenId.current();
 

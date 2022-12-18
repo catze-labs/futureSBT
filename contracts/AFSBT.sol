@@ -129,10 +129,6 @@ contract AFSBT is Initializable, AccessControl, IAFSBT721, IAFERC721Metadata {
             bytes32 bytes32Param1 = bytes32Param1s[i];
             bytes32 bytes32Param2 = bytes32Param2s[i];
 
-            if (to == address(0) || _tokenMap.contains(to)) {
-                continue;
-            }
-
             _tokenId.increment();
             uint256 tokenId = _tokenId.current();
 
