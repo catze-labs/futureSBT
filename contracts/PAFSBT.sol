@@ -387,7 +387,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     }
 
     /**
-     * @dev Sets the quest map with questId and profileId.
+     * @dev Sets the acheivement map with acheivementId and profileId.
      */
     function setQuestIdAndProfileId(uint256 key, uint256 value) external {
         require(
@@ -396,17 +396,17 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         );
         require (
             _acheivementAddress != address(0),
-            "The quest address is not set"
+            "The acheivement address is not set"
         );
         require (
             IERC721(_acheivementAddress).ownerOf(key) == _msgSender(),
-            "The quest is not owned by the sender"
+            "The acheivement is not owned by the sender"
         );
         _acheivementMap.set(key, value);
     }
 
     /**
-     * @dev Sets the quest map with questIds and profileIds.
+     * @dev Sets the acheivement map with acheivementIds and profileIds.
      */
     function setQuestIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
         require(
@@ -415,7 +415,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         );
         require (
             _acheivementAddress != address(0),
-            "The quest address is not set"
+            "The acheivement address is not set"
         );
         require (
             keys.length == values.length,
@@ -455,7 +455,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         );
         require (
             acheivementIds.length == profileIdsByItemIds.length,
-            "The length of questIds and profileIds are not equal"
+            "The length of acheivementIds and profileIds are not equal"
         );
         this.setItemIdsAndProfileIds(itemIds, profileIdsByQuestIds);
         this.setQuestIdsAndProfileIds(acheivementIds, profileIdsByItemIds);
