@@ -336,6 +336,31 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     }
 
     /**
+     * @dev Sets the item map with itemIds and profileIds.
+     */
+    function setItemIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
+        require(
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
+        );
+        require (
+            _itemAddress != address(0),
+            "The item address is not set"
+        );
+        require (
+            keys.length == values.length,
+            "The length of keys and values are not equal"
+        );
+        for (uint256 i = 0; i < keys.length; i++) {
+            require (
+                IERC721(_itemAddress).ownerOf(keys[i]) == _msgSender(),
+                "The item is not owned by the sender"
+            );
+            _itemMap.set(keys[i], values[i]);
+        }
+    }
+
+    /**
      * @dev Sets the item address.
      */
     function setItemAddress(address itemAddress) external {
@@ -377,6 +402,31 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
             "The quest is not owned by the sender"
         );
         _questMap.set(key, value);
+    }
+
+    /**
+     * @dev Sets the quest map with questIds and profileIds.
+     */
+    function setQuestIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
+        require(
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
+        );
+        require (
+            _questAddress != address(0),
+            "The quest address is not set"
+        );
+        require (
+            keys.length == values.length,
+            "The length of keys and values are not equal"
+        );
+        for (uint256 i = 0; i < keys.length; i++) {
+            require (
+                IERC721(_questAddress).ownerOf(keys[i]) == _msgSender(),
+                "The quest is not owned by the sender"
+            );
+            _questMap.set(keys[i], values[i]);
+        }
     }
 
     /**
