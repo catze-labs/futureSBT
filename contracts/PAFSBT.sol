@@ -2,6 +2,7 @@
 pragma solidity ^0.8.17;
 
 import "./interfaces/IERC721.sol";
+import "./interfaces/IAFSBT721.sol";
 import "./interfaces/IPAFSBT721.sol";
 import "./interfaces/IPAFERC721Metadata.sol";
 import "./utils/Context.sol";
@@ -38,8 +39,8 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     // customized for PAFSBT
     EnumerableMap.UintToUintMap private _itemMap;
     address private _itemAddress;
-    EnumerableMap.UintToUintMap private _questMap;
-    address private _questAddress;
+    EnumerableMap.UintToUintMap private _acheivementMap;
+    address private _acheivementAddress;
     EnumerableMap.UintToBytes32Map private _playfabIDMap;
     EnumerableMap.UintToBytes32Map private _createdAtMap;
 
@@ -372,17 +373,17 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     }
 
     /**
-     * @dev Returns the profile id of the quest id.
+     * @dev Returns the profile id of the acheivement id.
      */
     function getProfileIdByQuestId(uint256 key) external view returns (uint256) {
-        return _questMap.get(key);
+        return _acheivementMap.get(key);
     }
 
     /**
-     * @dev Returns the quest ids of the profile id.
+     * @dev Returns the acheivement ids of the profile id.
      */
     function getQuestsIdsByProfileId(uint256 value) external view returns (uint256[] memory) {
-        return _questMap.getKeysByValue(value);
+        return _acheivementMap.getKeysByValue(value);
     }
 
     /**
@@ -394,14 +395,14 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
             "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
         );
         require (
-            _questAddress != address(0),
+            _acheivementAddress != address(0),
             "The quest address is not set"
         );
         require (
-            IERC721(_questAddress).ownerOf(key) == _msgSender(),
+            IERC721(_acheivementAddress).ownerOf(key) == _msgSender(),
             "The quest is not owned by the sender"
         );
-        _questMap.set(key, value);
+        _acheivementMap.set(key, value);
     }
 
     /**
@@ -413,7 +414,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
             "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
         );
         require (
-            _questAddress != address(0),
+            _acheivementAddress != address(0),
             "The quest address is not set"
         );
         require (
@@ -422,42 +423,42 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         );
         for (uint256 i = 0; i < keys.length; i++) {
             require (
-                IERC721(_questAddress).ownerOf(keys[i]) == _msgSender(),
-                "The quest is not owned by the sender"
+                IERC721(_acheivementAddress).ownerOf(keys[i]) == _msgSender(),
+                "The acheivement is not owned by the sender"
             );
-            _questMap.set(keys[i], values[i]);
+            _acheivementMap.set(keys[i], values[i]);
         }
     }
 
     /**
-     * @dev Sets the quest address.
+     * @dev Sets the acheivement address.
      */
-    function setQuestAddress(address questAddress) external {
+    function setQuestAddress(address acheivementAddress) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-            "Only the account with DEFAULT_ADMIN_ROLE can set the quest address"
+            "Only the account with DEFAULT_ADMIN_ROLE can set the acheivement address"
         );
-        _questAddress = questAddress;
+        _acheivementAddress = acheivementAddress;
     }
 
     /**
-     * @dev Sets the quest and item maps with questIds, itemIds and profileIds.
+     * @dev Sets the acheivement and item maps with acheivementIds, itemIds and profileIds.
      */
-    function batchSetQuestAndItemMaps(uint256[] calldata questIds, uint256[] calldata profileIdsByQuestIds, uint256[] calldata itemIds, uint256[] calldata profileIdsByItemIds) external {
+    function batchSetQuestAndItemMaps(uint256[] calldata acheivementIds, uint256[] calldata profileIdsByQuestIds, uint256[] calldata itemIds, uint256[] calldata profileIdsByItemIds) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-            "Only the account with DEFAULT_ADMIN_ROLE can set the quest and item map"
+            "Only the account with DEFAULT_ADMIN_ROLE can set the acheivement and item map"
         );
         require (
             itemIds.length == profileIdsByQuestIds.length,
             "The length of itemIds and profileIds are not equal"
         );
         require (
-            questIds.length == profileIdsByItemIds.length,
+            acheivementIds.length == profileIdsByItemIds.length,
             "The length of questIds and profileIds are not equal"
         );
         this.setItemIdsAndProfileIds(itemIds, profileIdsByQuestIds);
-        this.setQuestIdsAndProfileIds(questIds, profileIdsByItemIds);
+        this.setQuestIdsAndProfileIds(acheivementIds, profileIdsByItemIds);
     }
 
     /**
@@ -473,4 +474,21 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     function playfabIDMapGetKeys(bytes32 value) external view returns (uint256[] memory) {
         return _playfabIDMap.getKeysByValue(value);
     }
+
+    /**
+     * @dev call emitTransfer function of contract which address is _itemAddress or _acheivementAddress.
+     * this function is for recording the transfer of item or acheivement.
+     */
+    function emitTransfer(address from, address to, uint256 tokenId, address destinationAddress) external {
+        require(
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            "Only the account with DEFAULT_ADMIN_ROLE can emit transfer"
+        );
+        require (
+            _itemAddress == destinationAddress || _acheivementAddress == destinationAddress,
+            "The destination address is not item or acheivement address"
+        );
+        IAFSBT721(destinationAddress).emitTransfer(from, to, tokenId);
+    }    
+    
 }

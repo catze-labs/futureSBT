@@ -92,4 +92,9 @@ interface IAFSBT721 {
      * @dev Returns the amount of tokens in existence.
      */
     function totalSupply() external view returns (uint256);
+
+    /**
+     * @dev Emits a {Transfer} event.
+     */
+    function emitTransfer(address from, address to, uint256 tokenId) external;
 }

@@ -36,11 +36,12 @@ contract AFSBT is Initializable, AccessControl, IAFSBT721, IAFERC721Metadata {
     EnumerableMap.AddressToUintMap private _tokenMap;
     EnumerableMap.UintToUintMap private _countMap;
     // customized for AFSBT
-    // Case1: item's id, name and rarity
-    // Case2: quest's id, name and description
     EnumerableMap.UintToUintMap private uintParamMap1;
     EnumerableMap.UintToBytes32Map private bytes32ParamMap1;
     EnumerableMap.UintToBytes32Map private bytes32ParamMap2;
+
+    // profile contract address who call emitTransfer
+    address public _profileContract;
 
     // Token Id
     Counters.Counter private _tokenId;
@@ -71,6 +72,17 @@ contract AFSBT is Initializable, AccessControl, IAFSBT721, IAFERC721Metadata {
         // grant DEFAULT_ADMIN_ROLE to contract creator
         _grantRole(DEFAULT_ADMIN_ROLE, admin_);
         _grantRole(OPERATOR_ROLE, admin_);
+    }
+
+    /**
+     * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
+     */
+    function setProfileContract(address profileContract_) external {
+        require(
+            hasRole(OPERATOR_ROLE, _msgSender()),
+            "Only the account with OPERATOR_ROLE can set the profile contract"
+        );
+        _profileContract = profileContract_;
     }
 
     function attest(address to, uint count_, uint uintParam1, bytes32 bytes32Param1, bytes32 bytes32Param2) external returns (uint256) {
@@ -304,6 +316,18 @@ contract AFSBT is Initializable, AccessControl, IAFSBT721, IAFERC721Metadata {
         _ownerMap.set(tokenId, to);
         _tokenMap.remove(from);
         _tokenMap.set(to, tokenId);
+        emit Transfer(from, to, tokenId);
+    }
+
+    /**
+     * @dev Emit transfer event requested by profile contract
+     */
+    function emitTransfer(address from, address to, uint256 tokenId) external {
+        require(
+            _profileContract == _msgSender(),
+            "Only the profile contract can emit transfer event"
+        );
+
         emit Transfer(from, to, tokenId);
     }
 }
