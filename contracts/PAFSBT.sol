@@ -39,8 +39,8 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     // customized for PAFSBT
     EnumerableMap.UintToUintMap private _itemMap;
     address private _itemAddress;
-    EnumerableMap.UintToUintMap private _acheivementMap;
-    address private _acheivementAddress;
+    EnumerableMap.UintToUintMap private _achievementMap;
+    address private _achievementAddress;
     EnumerableMap.UintToBytes32Map private _playfabIDMap;
     EnumerableMap.UintToBytes32Map private _createdAtMap;
 
@@ -301,6 +301,20 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         _tokenMap.remove(from);
         _tokenMap.set(to, tokenId);
         emit Transfer(from, to, tokenId);
+
+        // if limitedTransfer executed, all the related items and achievements should be transferred via transferFallback
+        // transfer the items
+        uint256[] memory itemIds = _itemMap.getKeysByValue(tokenId);
+        for (uint8 i = 0; i < itemIds.length; i++) {
+            uint256 itemId = itemIds[i];
+            this.transferFallback(from, to, itemId, _itemAddress);
+        }
+        // transfer the achievements
+        uint256[] memory achievementIds = _achievementMap.getKeysByValue(tokenId);
+        for (uint8 i = 0; i < achievementIds.length; i++) {
+            uint256 achievementId = achievementIds[i];
+            this.transferFallback(from, to, achievementId, _achievementAddress);
+        }
     }
 
     /**
@@ -373,49 +387,49 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     }
 
     /**
-     * @dev Returns the profile id of the acheivement id.
+     * @dev Returns the profile id of the achievement id.
      */
-    function getProfileIdByQuestId(uint256 key) external view returns (uint256) {
-        return _acheivementMap.get(key);
+    function getProfileIdByAcheivementId(uint256 key) external view returns (uint256) {
+        return _achievementMap.get(key);
     }
 
     /**
-     * @dev Returns the acheivement ids of the profile id.
+     * @dev Returns the achievement ids of the profile id.
      */
-    function getQuestsIdsByProfileId(uint256 value) external view returns (uint256[] memory) {
-        return _acheivementMap.getKeysByValue(value);
+    function getAcheivementsIdsByProfileId(uint256 value) external view returns (uint256[] memory) {
+        return _achievementMap.getKeysByValue(value);
     }
 
     /**
-     * @dev Sets the acheivement map with acheivementId and profileId.
+     * @dev Sets the achievement map with achievementId and profileId.
      */
-    function setQuestIdAndProfileId(uint256 key, uint256 value) external {
+    function setAcheivementIdAndProfileId(uint256 key, uint256 value) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
         );
         require (
-            _acheivementAddress != address(0),
-            "The acheivement address is not set"
+            _achievementAddress != address(0),
+            "The achievement address is not set"
         );
         require (
-            IERC721(_acheivementAddress).ownerOf(key) == _msgSender(),
-            "The acheivement is not owned by the sender"
+            IERC721(_achievementAddress).ownerOf(key) == _msgSender(),
+            "The achievement is not owned by the sender"
         );
-        _acheivementMap.set(key, value);
+        _achievementMap.set(key, value);
     }
 
     /**
-     * @dev Sets the acheivement map with acheivementIds and profileIds.
+     * @dev Sets the achievement map with achievementIds and profileIds.
      */
-    function setQuestIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
+    function setAcheivementIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
         );
         require (
-            _acheivementAddress != address(0),
-            "The acheivement address is not set"
+            _achievementAddress != address(0),
+            "The achievement address is not set"
         );
         require (
             keys.length == values.length,
@@ -423,42 +437,42 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         );
         for (uint256 i = 0; i < keys.length; i++) {
             require (
-                IERC721(_acheivementAddress).ownerOf(keys[i]) == _msgSender(),
-                "The acheivement is not owned by the sender"
+                IERC721(_achievementAddress).ownerOf(keys[i]) == _msgSender(),
+                "The achievement is not owned by the sender"
             );
-            _acheivementMap.set(keys[i], values[i]);
+            _achievementMap.set(keys[i], values[i]);
         }
     }
 
     /**
-     * @dev Sets the acheivement address.
+     * @dev Sets the achievement address.
      */
-    function setQuestAddress(address acheivementAddress) external {
+    function setAcheivementAddress(address achievementAddress) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-            "Only the account with DEFAULT_ADMIN_ROLE can set the acheivement address"
+            "Only the account with DEFAULT_ADMIN_ROLE can set the achievement address"
         );
-        _acheivementAddress = acheivementAddress;
+        _achievementAddress = achievementAddress;
     }
 
     /**
-     * @dev Sets the acheivement and item maps with acheivementIds, itemIds and profileIds.
+     * @dev Sets the achievement and item maps with achievementIds, itemIds and profileIds.
      */
-    function batchSetQuestAndItemMaps(uint256[] calldata acheivementIds, uint256[] calldata profileIdsByQuestIds, uint256[] calldata itemIds, uint256[] calldata profileIdsByItemIds) external {
+    function batchSetAcheivementAndItemMaps(uint256[] calldata achievementIds, uint256[] calldata profileIdsByAcheivementIds, uint256[] calldata itemIds, uint256[] calldata profileIdsByItemIds) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-            "Only the account with DEFAULT_ADMIN_ROLE can set the acheivement and item map"
+            "Only the account with DEFAULT_ADMIN_ROLE can set the achievement and item map"
         );
         require (
-            itemIds.length == profileIdsByQuestIds.length,
+            itemIds.length == profileIdsByAcheivementIds.length,
             "The length of itemIds and profileIds are not equal"
         );
         require (
-            acheivementIds.length == profileIdsByItemIds.length,
-            "The length of acheivementIds and profileIds are not equal"
+            achievementIds.length == profileIdsByItemIds.length,
+            "The length of achievementIds and profileIds are not equal"
         );
-        this.setItemIdsAndProfileIds(itemIds, profileIdsByQuestIds);
-        this.setQuestIdsAndProfileIds(acheivementIds, profileIdsByItemIds);
+        this.setItemIdsAndProfileIds(itemIds, profileIdsByAcheivementIds);
+        this.setAcheivementIdsAndProfileIds(achievementIds, profileIdsByItemIds);
     }
 
     /**
@@ -476,17 +490,17 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     }
 
     /**
-     * @dev call emitTransfer function of contract which address is _itemAddress or _acheivementAddress.
-     * this function is for recording the transfer of item or acheivement.
+     * @dev call emitTransfer function of contract which address is _itemAddress or _achievementAddress.
+     * this function is for recording the transfer of item or achievement.
      */
-    function emitTransfer(address from, address to, uint256 tokenId, address destinationAddress) external {
+    function transferFallback(address from, address to, uint256 tokenId, address destinationAddress) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Only the account with DEFAULT_ADMIN_ROLE can emit transfer"
         );
         require (
-            _itemAddress == destinationAddress || _acheivementAddress == destinationAddress,
-            "The destination address is not item or acheivement address"
+            _itemAddress == destinationAddress || _achievementAddress == destinationAddress,
+            "The destination address is not item or achievement address"
         );
         IAFSBT721(destinationAddress).emitTransfer(from, to, tokenId);
     }    
