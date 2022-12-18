@@ -8,7 +8,6 @@ typechain-types
 .DS_Store
 package-lock.json
 scripts
-README.md
 
 # Hardhat files
 cache
