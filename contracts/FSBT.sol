@@ -247,13 +247,13 @@ contract FSBT is Initializable, AccessControl, IFSBT721, IFERC721Metadata {
             super.supportsInterface(interfaceId);
     }
 
-        /**
-    * @dev Transfers a token from one address to another, if the sender has permission. And Decrements the count variable by 1 when a transfer is made.
-    *
-    * @param from The address of the current owner of the token.
-    * @param to The address of the new owner of the token.
-    * @param tokenId The unique identifier of the token.
-    */
+    /**
+     * @dev Transfers a token from one address to another, if the sender has permission. And Decrements the count variable by 1 when a transfer is made.
+     *
+     * @param from The address of the current owner of the token.
+     * @param to The address of the new owner of the token.
+     * @param tokenId The unique identifier of the token.
+     */
     function limitedTransfer(address from, address to, uint256 tokenId) external {
         // Check that the sender has permission to transfer the token
         require(_ownerMap.get(tokenId) == from, "Sender does not have permission to transfer token");

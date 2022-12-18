@@ -279,12 +279,12 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     }
 
     /**
-    * @dev Transfers a token from one address to another, if the sender has permission. And Decrements the count variable by 1 when a transfer is made.
-    *
-    * @param from The address of the current owner of the token.
-    * @param to The address of the new owner of the token.
-    * @param tokenId The unique identifier of the token.
-    */
+     * @dev Transfers a token from one address to another, if the sender has permission. And Decrements the count variable by 1 when a transfer is made.
+     *
+     * @param from The address of the current owner of the token.
+     * @param to The address of the new owner of the token.
+     * @param tokenId The unique identifier of the token.
+     */
     function limitedTransfer(address from, address to, uint256 tokenId) external {
         // Check that the sender has permission to transfer the token
         require(_ownerMap.get(tokenId) == from, "Sender does not have permission to transfer token");
@@ -302,17 +302,23 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         emit Transfer(from, to, tokenId);
     }
 
-    // EnumerableMap.UintToUintMap _itemMap getter by keys
+    /**
+     * @dev Returns the profile id of the item id.
+     */
     function getProfileIdByItemId(uint256 key) external view returns (uint256) {
         return _itemMap.get(key);
     }
 
-    // EnumerableMap.UintToUintMap _itemMap getter by values with getKeys from enumerable map
+    /**
+     * @dev Returns the item ids of the profile id.
+     */
     function getItemIdsByProfileId(uint256 value) external view returns (uint256[] memory) {
         return _itemMap.getKeysByValue(value);
     }
 
-    // EnumerableMap.UintToUintMap _itemMap setter
+    /**
+     * @dev Sets the item map with itemId and profileId.
+     */
     function setItemIdsAndProfileId(uint256 key, uint256 value) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
@@ -329,6 +335,9 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         _itemMap.set(key, value);
     }
 
+    /**
+     * @dev Sets the item address.
+     */
     function setItemAddress(address itemAddress) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
@@ -337,17 +346,23 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         _itemAddress = itemAddress;
     }
 
-    // EnumerableMap.UintToUintMap _questMap getter by keys
+    /**
+     * @dev Returns the profile id of the quest id.
+     */
     function getProfileIdByQuestId(uint256 key) external view returns (uint256) {
         return _questMap.get(key);
     }
 
-    // EnumerableMap.UintToUintMap _questMap getter by values with getKeys from enumerable map
+    /**
+     * @dev Returns the quest ids of the profile id.
+     */
     function getQuestsIdsByProfileId(uint256 value) external view returns (uint256[] memory) {
         return _questMap.getKeysByValue(value);
     }
 
-    // EnumerableMap.UintToUintMap _questMap setter
+    /**
+     * @dev Sets the quest map with questId and profileId.
+     */
     function setQuestIdsAndProfileId(uint256 key, uint256 value) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
@@ -364,6 +379,9 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         _questMap.set(key, value);
     }
 
+    /**
+     * @dev Sets the quest address.
+     */
     function setQuestAddress(address questAddress) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
@@ -372,12 +390,16 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         _questAddress = questAddress;
     }
 
-    // EnumerableMap.UintToBytes32Map _playfabIDMap getter by keys
+    /**
+     * @dev Returns the playfab id of the key.
+     */
     function getPlayfabId(uint256 key) external view returns (bytes32) {
         return _playfabIDMap.get(key);
     }
 
-    // EnumerableMap.UintToBytes32Map _playfabIDMap getter by values with getKeys from enumerable map
+    /**
+     * @dev Returns the keys of the playfab id.
+     */
     function playfabIDMapGetKeys(bytes32 value) external view returns (uint256[] memory) {
         return _playfabIDMap.getKeysByValue(value);
     }
