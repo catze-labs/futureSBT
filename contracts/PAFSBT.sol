@@ -75,31 +75,6 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         _grantRole(OPERATOR_ROLE, admin_);
     }
 
-    function attest(address to, uint count_, bytes32 playfabID_, bytes32 createdAt_) external returns (uint256) {
-        require(
-            hasRole(OPERATOR_ROLE, _msgSender()),
-            "Only the account with OPERATOR_ROLE can attest the SBT"
-        );
-        require(to != address(0), "Address is empty");
-        require(_msgSender() == to || !_tokenMap.contains(to), "SBT already exists");
-
-        _tokenId.increment();
-        uint256 tokenId = _tokenId.current();
-
-        _tokenMap.set(to, tokenId);
-        _ownerMap.set(tokenId, to);
-        _countMap.set(tokenId, count_);
-
-        // customized for PAFSBT
-        _playfabIDMap.set(tokenId, playfabID_);
-        _createdAtMap.set(tokenId, createdAt_);
-
-        emit Attest(to, tokenId, playfabID_, createdAt_);
-        emit Transfer(address(0), to, tokenId);
-
-        return tokenId;
-    }
-
     function batchAttest(address[] calldata addrs, uint[] calldata counts_, bytes32[] calldata playfabIDs_, bytes32[] calldata createdAts_) external {
         uint256 addrLength = addrs.length;
         uint256 countLength = counts_.length;
@@ -332,7 +307,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
      */
     function setItemIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
         require(
-            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()) || _msgSender() == address(this),
             "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
         );
         require (
@@ -382,8 +357,8 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
      */
     function setAchievementIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
         require(
-            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-            "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()) || _msgSender() == address(this),
+            "Only the account with DEFAULT_ADMIN_ROLE can set the achievement map"
         );
         require (
             _achievementAddress != address(0),

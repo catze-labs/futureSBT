@@ -28,19 +28,7 @@ interface IPAFSBT721 {
      */
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
-    /**
-     * @dev Mints SBT
-     *
-     * Requirements:
-     *
-     * - `to` must be valid.
-     * - `to` must not exist.
-     *
-     * Emits a {Attest} event.
-     * Emits a {Transfer} event.
-     * @return The tokenId of the minted SBT
-     */
-    function attest(address to, uint count_, bytes32 playfabID_, bytes32 createdAt_) external returns (uint256);
+    function batchAttest(address[] calldata addrs, uint[] calldata counts_, bytes32[] calldata playfabIDs_, bytes32[] calldata createdAts_) external;
 
     /**
      * @dev Revokes SBT
