@@ -332,25 +332,6 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     }
 
     /**
-     * @dev Sets the item map with itemId and profileId.
-     */
-    function setItemIdAndProfileId(uint256 key, uint256 value) external {
-        require(
-            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-            "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
-        );
-        require (
-            _itemAddress != address(0),
-            "The item address is not set"
-        );
-        require (
-            IERC721(_itemAddress).ownerOf(key) == _msgSender(),
-            "The item is not owned by the sender"
-        );
-        _itemMap.set(key, value);
-    }
-
-    /**
      * @dev Sets the item map with itemIds and profileIds.
      */
     function setItemIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
@@ -389,40 +370,21 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     /**
      * @dev Returns the profile id of the achievement id.
      */
-    function getProfileIdByAcheivementId(uint256 key) external view returns (uint256) {
+    function getProfileIdByAchievementId(uint256 key) external view returns (uint256) {
         return _achievementMap.get(key);
     }
 
     /**
      * @dev Returns the achievement ids of the profile id.
      */
-    function getAcheivementsIdsByProfileId(uint256 value) external view returns (uint256[] memory) {
+    function getAchievementsIdsByProfileId(uint256 value) external view returns (uint256[] memory) {
         return _achievementMap.getKeysByValue(value);
-    }
-
-    /**
-     * @dev Sets the achievement map with achievementId and profileId.
-     */
-    function setAcheivementIdAndProfileId(uint256 key, uint256 value) external {
-        require(
-            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-            "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
-        );
-        require (
-            _achievementAddress != address(0),
-            "The achievement address is not set"
-        );
-        require (
-            IERC721(_achievementAddress).ownerOf(key) == _msgSender(),
-            "The achievement is not owned by the sender"
-        );
-        _achievementMap.set(key, value);
     }
 
     /**
      * @dev Sets the achievement map with achievementIds and profileIds.
      */
-    function setAcheivementIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
+    function setAchievementIdsAndProfileIds(uint256[] calldata keys, uint256[] calldata values) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Only the account with DEFAULT_ADMIN_ROLE can set the item map"
@@ -447,7 +409,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     /**
      * @dev Sets the achievement address.
      */
-    function setAcheivementAddress(address achievementAddress) external {
+    function setAchievementAddress(address achievementAddress) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Only the account with DEFAULT_ADMIN_ROLE can set the achievement address"
@@ -458,35 +420,35 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     /**
      * @dev Sets the achievement and item maps with achievementIds, itemIds and profileIds.
      */
-    function batchSetAcheivementAndItemMaps(uint256[] calldata achievementIds, uint256[] calldata profileIdsByAcheivementIds, uint256[] calldata itemIds, uint256[] calldata profileIdsByItemIds) external {
+    function batchSetAchievementAndItemMaps(uint256[] calldata achievementIds, uint256[] calldata profileIdsByAchievementIds, uint256[] calldata itemIds, uint256[] calldata profileIdsByItemIds) external {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Only the account with DEFAULT_ADMIN_ROLE can set the achievement and item map"
         );
         require (
-            itemIds.length == profileIdsByAcheivementIds.length,
+            itemIds.length == profileIdsByAchievementIds.length,
             "The length of itemIds and profileIds are not equal"
         );
         require (
             achievementIds.length == profileIdsByItemIds.length,
             "The length of achievementIds and profileIds are not equal"
         );
-        this.setItemIdsAndProfileIds(itemIds, profileIdsByAcheivementIds);
-        this.setAcheivementIdsAndProfileIds(achievementIds, profileIdsByItemIds);
+        this.setItemIdsAndProfileIds(itemIds, profileIdsByAchievementIds);
+        this.setAchievementIdsAndProfileIds(achievementIds, profileIdsByItemIds);
     }
 
     /**
-     * @dev Returns the playfab id of the key.
+     * @dev Returns the playfab id of the profileId.
      */
-    function getPlayfabId(uint256 key) external view returns (bytes32) {
-        return _playfabIDMap.get(key);
+    function getPlayfabId(uint256 profileId) external view returns (bytes32) {
+        return _playfabIDMap.get(profileId);
     }
 
     /**
-     * @dev Returns the keys of the playfab id.
+     * @dev Returns the profileId of the playfab id.
      */
-    function playfabIDMapGetKeys(bytes32 value) external view returns (uint256[] memory) {
-        return _playfabIDMap.getKeysByValue(value);
+    function getProfileId(bytes32 playfabId) external view returns (uint256[] memory) {
+        return _playfabIDMap.getKeysByValue(playfabId);
     }
 
     /**
