@@ -11,7 +11,7 @@ interface IFSBT721 {
     event Attest(address indexed to, uint256 indexed tokenId);
 
     /**
-     * @dev This emits when an existing fSBT is revoked from an account and
+     * @dev This emits when an existing SBT is revoked from an account and
      * destroyed by any mechanism.
      * Note: For a reliable `from` parameter, retrieve the transaction's
      * authenticated `from` field.
@@ -19,7 +19,7 @@ interface IFSBT721 {
     event Revoke(address indexed from, uint256 indexed tokenId);
 
     /**
-     * @dev This emits when an existing fSBT is burned by an account
+     * @dev This emits when an existing SBT is burned by an account
      */
     event Burn(address indexed from, uint256 indexed tokenId);
 
@@ -38,9 +38,8 @@ interface IFSBT721 {
      *
      * Emits a {Attest} event.
      * Emits a {Transfer} event.
-     * @return The tokenId of the minted SBT
      */
-    function batchAttest(address[] calldata to, uint256 count_) external returns (uint256);
+    function batchAttest(address[] calldata to, uint[] calldata count_) external;
 
     /**
      * @dev Batch Revokes fSBT

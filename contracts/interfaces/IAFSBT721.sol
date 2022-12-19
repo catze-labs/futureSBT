@@ -38,9 +38,8 @@ interface IAFSBT721 {
      *
      * Emits a {Attest} event.
      * Emits a {Transfer} event.
-     * @return The tokenId of the minted SBT
      */
-    function batchAttest(address[] calldata to, uint256 count_) external returns (uint256);
+    function batchAttest(address[] calldata to, uint[] calldata count_, uint[] calldata uintParam1s, bytes32[] calldata bytes32Param1s, bytes32[] calldata bytes32Param2s) external;
 
     /**
      * @dev Batch Revokes AfSBTs
@@ -99,7 +98,7 @@ interface IAFSBT721 {
      * @param to The address of the fSBT receiver
      * @param tokenId The identifier for an fSBT
      */
-    function limitedtransfer(address from, address to, uint256 tokenId) external;
+    function limitedTransfer(address from, address to, uint256 tokenId) external;
 
     /**
      * @dev Emits a {Transfer} event.

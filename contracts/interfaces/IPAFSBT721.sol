@@ -39,7 +39,7 @@ interface IPAFSBT721 {
      * Emits a {Attest} event.
      * Emits a {Transfer} event.
      */
-    function batchAttest(address[] calldata addrs, uint[] calldata counts_, bytes32[] calldata playfabIDs_, bytes32[] calldata createdAts_) external;
+    function batchAttest(address[] calldata addrs, uint256[] calldata counts_, bytes32[] calldata playfabIDs_, bytes32[] calldata createdAts_) external;
 
     /**
      * @dev Batch Revokes AfSBTs
