@@ -21,6 +21,9 @@ import "./access/AccessControl.sol";
  * https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4105763
  *
  * I propose for a rename to Assetized Future SBT (AFSBT)
+ * AFSBT is a token that is bound to an address and can be used to represent a future asset.
+ * AFSBT is also a token that can be issued in advance, has a limited number of transfers, 
+  * and can be restricted or burned by the issuer or owner, like fSBT.
  */
 contract AFSBT is Initializable, AccessControl, IAFSBT721, IAFERC721Metadata {
     using Strings for uint256;
@@ -85,32 +88,9 @@ contract AFSBT is Initializable, AccessControl, IAFSBT721, IAFERC721Metadata {
         _profileContract = profileContract_;
     }
 
-    function attest(address to, uint count_, uint uintParam1, bytes32 bytes32Param1, bytes32 bytes32Param2) external returns (uint256) {
-        require(
-            hasRole(OPERATOR_ROLE, _msgSender()),
-            "Only the account with OPERATOR_ROLE can attest the SBT"
-        );
-        require(to != address(0), "Address is empty");
-        require(!_tokenMap.contains(to), "SBT already exists");
-
-        _tokenId.increment();
-        uint256 tokenId = _tokenId.current();
-
-        _tokenMap.set(to, tokenId);
-        _ownerMap.set(tokenId, to);
-        _countMap.set(tokenId, count_);
-
-        // customized for AFSBT
-        uintParamMap1.set(tokenId, uintParam1);
-        bytes32ParamMap1.set(tokenId, bytes32Param1);
-        bytes32ParamMap2.set(tokenId, bytes32Param2);
-
-        emit Attest(to, tokenId);
-        emit Transfer(address(0), to, tokenId);
-
-        return tokenId;
-    }
-
+    /**
+     * @dev batchAttest the AfSBTs
+     */
     function batchAttest(address[] calldata addrs, uint[] calldata counts_, uint[] calldata uintParam1s, bytes32[] calldata bytes32Param1s, bytes32[] calldata bytes32Param2s) external {
         uint256 addrLength = addrs.length;
         uint256 countLength = counts_.length;
@@ -146,29 +126,9 @@ contract AFSBT is Initializable, AccessControl, IAFSBT721, IAFERC721Metadata {
         }
     }
 
-    function revoke(address from) external {
-        require(
-            hasRole(OPERATOR_ROLE, _msgSender()),
-            "Only the account with OPERATOR_ROLE can revoke the SBT"
-        );
-        require(from != address(0), "Address is empty");
-        require(_tokenMap.contains(from), "The account does not have any SBT");
-
-        uint256 tokenId = _tokenMap.get(from);
-
-        _tokenMap.remove(from);
-        _ownerMap.remove(tokenId);
-        _countMap.remove(tokenId);
-
-        // customized for AFSBT
-        uintParamMap1.remove(tokenId);
-        bytes32ParamMap1.remove(tokenId);
-        bytes32ParamMap2.remove(tokenId);
-
-        emit Revoke(from, tokenId);
-        emit Transfer(from, address(0), tokenId);
-    }
-
+    /**
+     * @dev batchRevoke the AfSBTs
+     */
     function batchRevoke(address[] calldata addrs) external {
         uint256 addrLength = addrs.length;
 
@@ -201,6 +161,9 @@ contract AFSBT is Initializable, AccessControl, IAFSBT721, IAFERC721Metadata {
         }
     }
 
+    /**
+     * @dev Burn the AfSBT
+     */
     function burn() external {
         address sender = _msgSender();
 
