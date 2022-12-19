@@ -21,7 +21,10 @@ import "./access/AccessControl.sol";
  * co-authored whitepaper at:
  * https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4105763
  *
- * I propose for a rename to Profiles by Assetized Future SBT (PAFSBT)
+ * I propose for a rename to Profiles by Assetized Future SBT (PAfSBT)
+ * PAfSBT is a token that is bound to an address and can be used to represent a future asset.
+ * PAfSBT is also a token that can be issued in advance, has a limited number of transfers, 
+* and can be restricted or burned by the issuer or owner, like fSBT or AfSBT.
  */
 contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata {
     using Strings for uint256;
@@ -75,6 +78,9 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         _grantRole(OPERATOR_ROLE, admin_);
     }
 
+    /**
+     * @dev Batch attests the PAfSBTs
+     */
     function batchAttest(address[] calldata addrs, uint[] calldata counts_, bytes32[] calldata playfabIDs_, bytes32[] calldata createdAts_) external {
         uint256 addrLength = addrs.length;
         uint256 countLength = counts_.length;
@@ -108,28 +114,9 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         }
     }
 
-    function revoke(address from) external {
-        require(
-            hasRole(OPERATOR_ROLE, _msgSender()),
-            "Only the account with OPERATOR_ROLE can revoke the SBT"
-        );
-        require(from != address(0), "Address is empty");
-        require(_tokenMap.contains(from), "The account does not have any SBT");
-
-        uint256 tokenId = _tokenMap.get(from);
-
-        _tokenMap.remove(from);
-        _ownerMap.remove(tokenId);
-        _countMap.remove(tokenId);
-
-        // customized for PAFSBT
-        _playfabIDMap.remove(tokenId);
-        _createdAtMap.remove(tokenId);
-
-        emit Revoke(from, tokenId);
-        emit Transfer(from, address(0), tokenId);
-    }
-
+    /**
+     * @dev Batch revokes the PAfSBTs
+     */
     function batchRevoke(address[] calldata addrs) external {
         uint256 addrLength = addrs.length;
 
@@ -161,6 +148,9 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         }
     }
 
+    /**
+     * @dev burns the PAfSBT
+     */
     function burn() external {
         address sender = _msgSender();
 
@@ -411,14 +401,14 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
     /**
      * @dev Returns the playfab id of the profileId.
      */
-    function getPlayfabId(uint256 profileId) external view returns (bytes32) {
+    function getPlayfabIdByProfileId(uint256 profileId) external view returns (bytes32) {
         return _playfabIDMap.get(profileId);
     }
 
     /**
      * @dev Returns the profileId of the playfab id.
      */
-    function getProfileId(bytes32 playfabId) external view returns (uint256[] memory) {
+    function getProfileIdByPlayfabId(bytes32 playfabId) external view returns (uint256[] memory) {
         return _playfabIDMap.getKeysByValue(playfabId);
     }
 
@@ -428,7 +418,7 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
      */
     function transferFallback(address from, address to, uint256 tokenId, address destinationAddress) external {
         require(
-            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()) || _msgSender() == address(this),
             "Only the account with DEFAULT_ADMIN_ROLE can emit transfer"
         );
         require (

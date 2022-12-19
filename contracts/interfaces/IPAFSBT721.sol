@@ -28,10 +28,21 @@ interface IPAFSBT721 {
      */
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
+    /**
+     * @dev Batch Mints AfSBTs
+     *
+     * Requirements:
+     *
+     * - `to` must be valid.
+     * - `to` must not exist.
+     *
+     * Emits a {Attest} event.
+     * Emits a {Transfer} event.
+     */
     function batchAttest(address[] calldata addrs, uint[] calldata counts_, bytes32[] calldata playfabIDs_, bytes32[] calldata createdAts_) external;
 
     /**
-     * @dev Revokes SBT
+     * @dev Batch Revokes AfSBTs
      *
      * Requirements:
      *
@@ -40,7 +51,7 @@ interface IPAFSBT721 {
      * Emits a {Revoke} event.
      * Emits a {Transfer} event.
      */
-    function revoke(address from) external;
+    function batchRevoke(address[] calldata from) external;
 
     /**
      * @notice At any time, an SBT receiver must be able to
