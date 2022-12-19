@@ -20,7 +20,8 @@ import "./access/AccessControl.sol";
  * co-authored whitepaper at:
  * https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4105763
  *
- * I propose for a rename to Future SBT (FSBT)
+ * We propose for Future SBT (FSBT), a token that can be issued in advance, 
+ * has a limited number of transfers, and can be restricted or burned by the issuer or owner.
  */
 contract FSBT is Initializable, AccessControl, IFSBT721, IFERC721Metadata {
     using Strings for uint256;
@@ -65,27 +66,9 @@ contract FSBT is Initializable, AccessControl, IFSBT721, IFERC721Metadata {
         _grantRole(OPERATOR_ROLE, admin_);
     }
 
-    function attest(address to, uint count_) external returns (uint256) {
-        require(
-            hasRole(OPERATOR_ROLE, _msgSender()),
-            "Only the account with OPERATOR_ROLE can attest the SBT"
-        );
-        require(to != address(0), "Address is empty");
-        require(!_tokenMap.contains(to), "SBT already exists");
-
-        _tokenId.increment();
-        uint256 tokenId = _tokenId.current();
-
-        _tokenMap.set(to, tokenId);
-        _ownerMap.set(tokenId, to);
-        _countMap.set(tokenId, count_);
-
-        emit Attest(to, tokenId);
-        emit Transfer(address(0), to, tokenId);
-
-        return tokenId;
-    }
-
+    /**
+     * @dev batch attests the fSBTs
+     */
     function batchAttest(address[] calldata addrs, uint[] calldata counts_) external {
         uint256 addrLength = addrs.length;
         uint256 countLength = counts_.length;
@@ -117,24 +100,9 @@ contract FSBT is Initializable, AccessControl, IFSBT721, IFERC721Metadata {
         }
     }
 
-    function revoke(address from) external {
-        require(
-            hasRole(OPERATOR_ROLE, _msgSender()),
-            "Only the account with OPERATOR_ROLE can revoke the SBT"
-        );
-        require(from != address(0), "Address is empty");
-        require(_tokenMap.contains(from), "The account does not have any SBT");
-
-        uint256 tokenId = _tokenMap.get(from);
-
-        _tokenMap.remove(from);
-        _ownerMap.remove(tokenId);
-        _countMap.remove(tokenId);
-
-        emit Revoke(from, tokenId);
-        emit Transfer(from, address(0), tokenId);
-    }
-
+    /**
+     * @dev batch revokes the fSBTs
+     */
     function batchRevoke(address[] calldata addrs) external {
         uint256 addrLength = addrs.length;
 
@@ -162,6 +130,9 @@ contract FSBT is Initializable, AccessControl, IFSBT721, IFERC721Metadata {
         }
     }
 
+    /**
+     * @dev burns the fSBT
+     */
     function burn() external {
         address sender = _msgSender();
 
