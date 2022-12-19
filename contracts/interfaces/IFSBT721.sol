@@ -11,7 +11,7 @@ interface IFSBT721 {
     event Attest(address indexed to, uint256 indexed tokenId);
 
     /**
-     * @dev This emits when an existing SBT is revoked from an account and
+     * @dev This emits when an existing fSBT is revoked from an account and
      * destroyed by any mechanism.
      * Note: For a reliable `from` parameter, retrieve the transaction's
      * authenticated `from` field.
@@ -19,7 +19,7 @@ interface IFSBT721 {
     event Revoke(address indexed from, uint256 indexed tokenId);
 
     /**
-     * @dev This emits when an existing SBT is burned by an account
+     * @dev This emits when an existing fSBT is burned by an account
      */
     event Burn(address indexed from, uint256 indexed tokenId);
 
@@ -29,7 +29,7 @@ interface IFSBT721 {
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
     /**
-     * @dev Mints SBT
+     * @dev Batch Mints fSBTs
      *
      * Requirements:
      *
@@ -40,10 +40,10 @@ interface IFSBT721 {
      * Emits a {Transfer} event.
      * @return The tokenId of the minted SBT
      */
-    function attest(address to, uint count_) external returns (uint256);
+    function batchAttest(address[] calldata to, uint256 count_) external returns (uint256);
 
     /**
-     * @dev Revokes SBT
+     * @dev Batch Revokes fSBT
      *
      * Requirements:
      *
@@ -52,7 +52,7 @@ interface IFSBT721 {
      * Emits a {Revoke} event.
      * Emits a {Transfer} event.
      */
-    function revoke(address from) external;
+    function batchrevoke(address[] calldata from) external;
 
     /**
      * @notice At any time, an SBT receiver must be able to
@@ -92,4 +92,12 @@ interface IFSBT721 {
      * @dev Returns the amount of tokens in existence.
      */
     function totalSupply() external view returns (uint256);
+
+    /**
+     * @dev transfer the fSBT to another account
+     * @param from The address of the fSBT owner
+     * @param to The address of the fSBT receiver
+     * @param tokenId The identifier for an fSBT
+     */
+    function limitedTransfer(address from, address to, uint256 tokenId) external;
 }
