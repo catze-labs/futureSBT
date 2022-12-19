@@ -52,7 +52,7 @@ interface IFSBT721 {
      * Emits a {Revoke} event.
      * Emits a {Transfer} event.
      */
-    function batchrevoke(address[] calldata from) external;
+    function batchRevoke(address[] calldata from) external;
 
     /**
      * @notice At any time, an SBT receiver must be able to

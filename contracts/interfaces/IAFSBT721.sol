@@ -29,7 +29,7 @@ interface IAFSBT721 {
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
     /**
-     * @dev Mints SBT
+     * @dev Batch Mints AfSBTs
      *
      * Requirements:
      *
@@ -40,10 +40,10 @@ interface IAFSBT721 {
      * Emits a {Transfer} event.
      * @return The tokenId of the minted SBT
      */
-    function attest(address to, uint count_, uint uintParam1, bytes32 bytes32Param1, bytes32 bytes32Param2) external returns (uint256);
+    function batchAttest(address[] calldata to, uint256 count_) external returns (uint256);
 
     /**
-     * @dev Revokes SBT
+     * @dev Batch Revokes AfSBTs
      *
      * Requirements:
      *
@@ -52,7 +52,7 @@ interface IAFSBT721 {
      * Emits a {Revoke} event.
      * Emits a {Transfer} event.
      */
-    function revoke(address from) external;
+    function batchRevoke(address[] calldata from) external;
 
     /**
      * @notice At any time, an SBT receiver must be able to
@@ -92,6 +92,14 @@ interface IAFSBT721 {
      * @dev Returns the amount of tokens in existence.
      */
     function totalSupply() external view returns (uint256);
+
+    /**
+     * @dev transfer the fSBT to another account
+     * @param from The address of the fSBT owner
+     * @param to The address of the fSBT receiver
+     * @param tokenId The identifier for an fSBT
+     */
+    function limitedtransfer(address from, address to, uint256 tokenId) external;
 
     /**
      * @dev Emits a {Transfer} event.
