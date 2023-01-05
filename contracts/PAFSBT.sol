@@ -86,8 +86,8 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         uint256 countLength = counts_.length;
 
         require(
-            hasRole(OPERATOR_ROLE, _msgSender()),
-            "Only the account with OPERATOR_ROLE can attest the SBT"
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            "Only the account with DEFAULT_ADMIN_ROLE can attest the tokens"
         );
         require(addrLength <= 100, "The max length of addresses is 100");
         require(addrLength == countLength, "The length of addresses and counts is not equal");
@@ -121,8 +121,8 @@ contract PAFSBT is Initializable, AccessControl, IPAFSBT721, IPAFERC721Metadata 
         uint256 addrLength = addrs.length;
 
         require(
-            hasRole(OPERATOR_ROLE, _msgSender()),
-            "Only the account with OPERATOR_ROLE can revoke the SBT"
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            "Only the account with DEFAULT_ADMIN_ROLE can revoke the tokens"
         );
         require(addrLength <= 100, "The max length of addresses is 100");
 
