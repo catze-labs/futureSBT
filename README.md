@@ -1,5 +1,7 @@
 # Future SBT
 
+# Our BEP-179 is live! : bnb-chain/BEPs#179
+
 ## Table of Contents
 1. [SBT, BAB and fSBT](#tokens)
 2. [What is fSBT?](#FSBT)
